@@ -11,7 +11,7 @@ public class SpinnerControl : MonoBehaviour {
     public GameObject[] Engines;
     public GameObject[] Thrusters;
 
-    private bool shouldStart = true;
+    private bool isBuilding = false;
 
     private GameObject core;
     private int coreNum = 0;
@@ -21,89 +21,112 @@ public class SpinnerControl : MonoBehaviour {
     private int ltNum = 0;
     private GameObject rightThruster;
     private int rtNum = 0;
-
-	void Start () {
-
-    }
 	
 	void Update () {
-        if (!shouldStart && !GlobalVariables.BuildRoomIsActive)
+        if (Input.GetKeyDown("c"))
         {
-            Vector3 pos = Vector3.zero;
-            Quaternion rot = Quaternion.identity;
-
-            foreach (Transform child in PlayerObject.transform)
+            if (!isBuilding)
             {
-                pos = child.position;
-                rot = child.rotation;
-                Destroy(child.gameObject);
+                isBuilding = true;
+                StartProcess();
             }
+            else if (isBuilding)
+            {
+                Vector3 pos = Vector3.zero;
+                Quaternion rot = Quaternion.identity;
 
-            Instantiate(core, pos, rot, PlayerObject.transform);
+                // Get the current player ship.
+                foreach (Transform child in PlayerObject.transform)
+                {
+                    pos = child.position;
+                    rot = child.rotation;
+                    Destroy(child.gameObject);
+                }
 
-            // Build room deactivated.
-            shouldStart = true;
-            DestroyAllParts();
-        }
-        if (!GlobalVariables.BuildRoomIsActive) return;
-        if (shouldStart) StartProcess();
+                // Replace the current ship with the newly built one.
+                Instantiate(core, pos, rot, PlayerObject.transform);
 
-        transform.Rotate((Vector3.up * Time.deltaTime) * SpinSpeed);
+                // Build room deactivated.
+                DestroyAllParts();
+                isBuilding = false;
+            }
+        }
+        if (isBuilding)
+        {
+            // Constant ship rotation in the builder.
+            transform.Rotate((Vector3.up * Time.deltaTime) * SpinSpeed);
 
-        if (Input.GetKeyDown("1"))
-        {
-            if (coreNum >= Cores.Length - 1) coreNum = 0;
-            else coreNum++;
-            SetNewCore();
-        }
-        if (Input.GetKeyDown("2"))
-        {
-            SetPart(ref engine, Engines, ref engNum, "Engine");
-        }
-        if (Input.GetKeyDown("3"))
-        {
-            SetPart(ref leftThruster, Thrusters, ref ltNum, "LeftThruster");
-        }
-        if (Input.GetKeyDown("4"))
-        {
-            SetPart(ref rightThruster, Thrusters, ref rtNum, "RightThruster");
+            // Change the core
+            if (Input.GetKeyDown("1"))
+            {
+                if (coreNum >= Cores.Length - 1) coreNum = 0;
+                else coreNum++;
+                SetNewCore();
+            }
+            // Change the engine part
+            if (Input.GetKeyDown("2"))
+            {
+                SetPart(ref engine, Engines, ref engNum, "Engine");
+            }
+            // Change the left thruster part
+            if (Input.GetKeyDown("3"))
+            {
+                SetPart(ref leftThruster, Thrusters, ref ltNum, "LeftThruster");
+            }
+            // Change the right thruster part
+            if (Input.GetKeyDown("4"))
+            {
+                SetPart(ref rightThruster, Thrusters, ref rtNum, "RightThruster");
+            }
         }
     }
 
     private void SetPart(ref GameObject part, GameObject[] theList, ref int theCount, string partName)
     {
+        // Get the array id to be used
         if (theCount >= theList.Length - 1) theCount = 0;
         else theCount++;
+
+        // Get positions and rotations
         var pos = part.transform.position;
         var rot = part.transform.rotation;
+
         Destroy(part);
+
+        // Ready the part
         part = theList[theCount];
+
+        // Find the mount point
         var mount = core.transform.Find(partName);
+
+        // Create the part
         part = Instantiate(part, pos, rot, mount);
     }
 
     private void StartProcess()
     {
-        shouldStart = false;
-        core = Cores[0];
-        engine = Engines[0];
-        leftThruster = Thrusters[0];
-        rightThruster = Thrusters[0];
+        ReadyParts();
 
+        // Create the Core
         core = Instantiate(core, transform.position, Quaternion.identity, transform);
 
+        // Create the Engine
         var engineMount = core.transform.Find("Engine");
         engine = Instantiate(engine, engineMount.transform.position, engine.transform.rotation, engineMount);
 
+        // Create the left thruster
         var ltMount = core.transform.Find("LeftThruster");
         leftThruster = Instantiate(leftThruster, ltMount.transform.position, leftThruster.transform.rotation, ltMount);
 
+        // Create the right thruster
         var rtMount = core.transform.Find("RightThruster");
         rightThruster = Instantiate(rightThruster, rtMount.transform.position, rightThruster.transform.rotation, rtMount);
     }
 
+    // Since all parts are attached to the core, everything needs to be rebuilt if the core is changed.
     private void SetNewCore()
     {
+        // Get positions and rotations of all parts.
         var pos = core.transform.position;
         var rot = core.transform.rotation;
         var engPos = engine.transform.position;
@@ -112,21 +135,24 @@ public class SpinnerControl : MonoBehaviour {
         var ltRot = leftThruster.transform.rotation;
         var rtPos = rightThruster.transform.position;
         var rtRot = rightThruster.transform.rotation;
+
+        // Destroying the core also destroys the other attached parts.
         Destroy(core);
 
-        core = Cores[coreNum];
-        engine = Engines[engNum];
-        leftThruster = Thrusters[ltNum];
-        rightThruster = Thrusters[rtNum];
+        ReadyParts();
 
+        // Create the Core
         core = Instantiate(core, pos, rot, transform);
 
+        // Create the Engine
         var engineMount = core.transform.Find("Engine");
         engine = Instantiate(engine, engPos, engRot, engineMount);
 
+        // Create the left thruster
         var ltMount = core.transform.Find("LeftThruster");
         leftThruster = Instantiate(leftThruster, ltPos, ltRot, ltMount);
 
+        // Create the right thruster
         var rtMount = core.transform.Find("RightThruster");
         rightThruster = Instantiate(rightThruster, rtPos, rtRot, rtMount);
     }
@@ -137,6 +163,15 @@ public class SpinnerControl : MonoBehaviour {
         {
             Destroy(child.gameObject);
         }
+    }
+
+    private void ReadyParts()
+    {
+        // Ready parts using existing array counts (This will need to be different when arrays can change based on what parts you have.)
+        core = Cores[coreNum];
+        engine = Engines[engNum];
+        leftThruster = Thrusters[ltNum];
+        rightThruster = Thrusters[rtNum];
     }
 
 }
