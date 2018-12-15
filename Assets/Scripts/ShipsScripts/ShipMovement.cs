@@ -6,60 +6,67 @@ using UnityEngine.UI;
 public class ShipMovement : MonoBehaviour
 {
 
-    public float moveSpeed = 2.5f;
-    public float rotateSpeed = 150.0f;
+    public float moveSpeed = 5f;
+    public float reverseSpeed = 5f;
+    public float strafeSpeed = 5f;
     public float boostMultiplier = 2.0f;
-    public float reverseSpeed = 1.0f;
-    public float strafeSpeed = 2.0f;
+    public float thrustPower = 5.0f;
+    public float rotateSpeed = 2.5f;
 
-    private bool isMovingFoward = false;
-    private bool isStrafing = false;
     private float actualMoveSpeed = 0;
     private float horizontalAxis = 0;
     private float verticalAxis = 0;
+    private bool hasTarget = false;
+    private bool isStrafing = false;
+    private bool isMovingFoward = false;
 
     void Update()
     {
         horizontalAxis = Input.GetAxis("Horizontal");
         verticalAxis = Input.GetAxis("Vertical");
+        hasTarget = gameObject.GetComponent<FindTarget>().haveTarget;
 
         // Rotation.   
-        if (!isStrafing)
+        if (!isStrafing && !hasTarget)
         {
             var x = horizontalAxis * Time.deltaTime * rotateSpeed;
             transform.Rotate(0, x, 0);
         }
-        
+
         // Forward/Backward thrust.
-        var z = verticalAxis * Time.deltaTime * actualMoveSpeed;
-        transform.Translate(0, 0, z);
+        if (!Input.GetKey("space"))
+        {
+            var z = verticalAxis * Time.deltaTime * actualMoveSpeed;
+            transform.Translate(0, 0, z);
+        }
 
         // Begin forward thrust.
-        if (Input.GetKeyDown("w"))
+        if (Input.GetKeyDown("w") && !Input.GetKey("space"))
         {
             isStrafing = false;
             actualMoveSpeed = moveSpeed;
             isMovingFoward = true;
         }
         // End forward thrust.
-        if (Input.GetKeyUp("w"))
+        if (Input.GetKeyUp("w") && !Input.GetKey("space"))
         {
             isMovingFoward = false;
             actualMoveSpeed = 0;
         }
 
         // Begin reverse thrust.
-        if (Input.GetKeyDown("s"))
+        if (Input.GetKeyDown("s") && !Input.GetKey("space"))
         {
             actualMoveSpeed = reverseSpeed;
         }
         // End reverse thrust.
-        if (Input.GetKeyUp("s"))
+        if (Input.GetKeyUp("s") && !Input.GetKey("space"))
         {
             actualMoveSpeed = moveSpeed;
         }
 
-        if (isMovingFoward)
+        // Boost
+        if (isMovingFoward && !Input.GetKey("space"))
         {
             if (Input.GetKey("left shift"))
             {
@@ -68,6 +75,7 @@ public class ShipMovement : MonoBehaviour
             else actualMoveSpeed = moveSpeed;
         }
 
+        // Strafing
         if (Input.GetKey("left shift") && !isMovingFoward)
         {
             isStrafing = true;
@@ -79,6 +87,17 @@ public class ShipMovement : MonoBehaviour
             isStrafing = false;
         }
 
+        // Targetted Thrusting
+        if (hasTarget)
+        {
+            isStrafing = true;
+            var strafe = horizontalAxis * Time.deltaTime * strafeSpeed;
+            transform.Translate(strafe, 0, 0);
+        }
+        if (!hasTarget)
+        {
+            isStrafing = false;
+        }
     }
 
     void OnGUI()

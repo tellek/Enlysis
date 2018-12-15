@@ -5,7 +5,6 @@ using UnityEngine;
 public class SpinnerControl : MonoBehaviour {
 
     public GameObject PlayerObject;
-    public GameObject Spinner;
     public float SpinSpeed = 30;
     public GameObject[] Cores;
     public GameObject[] Engines;

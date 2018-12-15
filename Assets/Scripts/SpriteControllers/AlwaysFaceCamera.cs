@@ -4,10 +4,8 @@ using UnityEngine;
 
 public class AlwaysFaceCamera : MonoBehaviour {
 
-    public Camera CameraToFace;
-
     void Update () {
-        if (CameraToFace == null) transform.LookAt(Camera.main.transform);
-        else transform.LookAt(CameraToFace.transform);
+        if (Camera.main == null) return;
+        transform.LookAt(Camera.main.transform);
     }
 }

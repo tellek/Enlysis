@@ -10,6 +10,7 @@ public class KeepSameSizeOnScreen : MonoBehaviour {
     private float reducer = 1000;
 	
 	void Update () {
+        if (Camera.main == null) return;
         transform.localScale = desiredScale * (Vector3.Distance(transform.position, Camera.main.transform.position) / reducer) / Divisor;
     }
 }

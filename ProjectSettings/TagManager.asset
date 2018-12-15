@@ -16,6 +16,7 @@ TagManager:
   - Part_Core
   - Part_Engine
   - Part_Thruster
+  - Enemy
   layers:
   - Default
   - TransparentFX

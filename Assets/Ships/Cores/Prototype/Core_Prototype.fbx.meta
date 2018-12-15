@@ -10,6 +10,8 @@ ModelImporter:
     100008: RightThruster
     100010: RightWeapon
     100012: //RootNode
+    100014: Booster
+    100016: Cockpit
     400000: Core
     400002: Engine
     400004: LeftThruster
@@ -17,10 +19,18 @@ ModelImporter:
     400008: RightThruster
     400010: RightWeapon
     400012: //RootNode
+    400014: Booster
+    400016: Cockpit
     2100000: Material
     2300000: Core
+    2300002: Booster
+    2300004: Cockpit
     3300000: Core
+    3300002: Booster
+    3300004: Cockpit
     4300000: Core
+    4300002: Booster
+    4300004: Cockpit
   externalObjects: {}
   materials:
     importMaterials: 1
