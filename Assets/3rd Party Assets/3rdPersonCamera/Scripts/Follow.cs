@@ -12,6 +12,7 @@ namespace ThirdPersonCamera
         public float rotationSpeedSlopes = 0.5f;
         public bool lookBackwards = false;
 
+        public bool checkMotionForBackwards = true;
         public float backwardsMotionThreshold = 0.05f;
         public float angleThreshold = 170.0f;
 
@@ -33,6 +34,25 @@ namespace ThirdPersonCamera
             {
                 RaycastHit raycastHit;
                 Vector3 upVector = Vector3.up;
+
+                if (checkMotionForBackwards)
+                {
+                    Vector3 motionVector = cc.target.transform.position - prevPosition;
+
+                    if (motionVector.magnitude > backwardsMotionThreshold)
+                    {
+                        float angle = Vector3.Angle(motionVector, cc.target.transform.forward);
+
+                        if (angle > angleThreshold)
+                        {
+                            lookBackwards = true;
+                        }
+                        else
+                            lookBackwards = false;
+                    }
+
+                    prevPosition = cc.target.transform.position;
+                }
 
                 Quaternion toRotation = Quaternion.LookRotation((!lookBackwards ? cc.target.transform.forward + tiltVector : -cc.target.transform.forward + tiltVector), Vector3.up);
 

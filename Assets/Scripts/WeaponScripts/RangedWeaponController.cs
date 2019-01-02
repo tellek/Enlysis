@@ -88,22 +88,28 @@ public class RangedWeaponController : MonoBehaviour {
 
     public void FiringEvent()
     {
-        if (!anim.GetBool("IsFired"))
-        {
-            fireSound.Play();
-            anim.SetBool("IsFired", true);
-            var muz = transform.Find("Mount").Find("Gimble").Find("Weapon").Find("MuzzlePoint").transform;
-            if (Projectile != null) Instantiate(Projectile, muz.position, muz.rotation);
-            if (FireParticleEffect != null) Instantiate(FireParticleEffect, muz.position, muz.rotation, gameObject.transform);
-            AmmunitionCount -= AmmoUsedPerShot;
-        }
+        fireSound.Play();
+        var muz = transform.Find("Mount").Find("Gimble").Find("Weapon").Find("MuzzlePoint").transform;
+        if (Projectile != null) Instantiate(Projectile, muz.position, muz.rotation);
+        if (FireParticleEffect != null) Instantiate(FireParticleEffect, muz.position, muz.rotation, gameObject.transform);
+        AmmunitionCount -= AmmoUsedPerShot;
+
+        // if (!anim.GetBool("IsFired"))
+        // {
+        //     fireSound.Play();
+        //     anim.SetBool("IsFired", true);
+        //     var muz = transform.Find("Mount").Find("Gimble").Find("Weapon").Find("MuzzlePoint").transform;
+        //     if (Projectile != null) Instantiate(Projectile, muz.position, muz.rotation);
+        //     if (FireParticleEffect != null) Instantiate(FireParticleEffect, muz.position, muz.rotation, gameObject.transform);
+        //     AmmunitionCount -= AmmoUsedPerShot;
+        // }
              
     }
 
-    public void FiredEvent()
-    {
-        anim.SetBool("IsFired", false);
-    }
+    // public void FiredEvent()
+    // {
+    //     anim.SetBool("IsFired", false);
+    // }
 
 
 }

@@ -1,12 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using Assets.Scripts.WeaponScripts.RangedWeaponClasses;
+using UnityEngine;
 
 public class ProjectileSpawning : MonoBehaviour {
 
 	public GameObject Target;
 	public float damping = 1f;
+	public bool receiveInput = false;
 
 	[Space]
 	[Header ("Rotation Properties")]
@@ -57,15 +58,18 @@ public class ProjectileSpawning : MonoBehaviour {
 	}
 
 	void FixedUpdate () {
-		// Button Actions
-		if (Input.GetKeyDown (KeyCode.F)) {
-			if (currentProj == Projectiles.Length -1) currentProj = 0;
-			else currentProj++;
-			_projectile = Projectiles[currentProj];
+		if (receiveInput) {
+			// Button Actions
+			if (Input.GetKeyDown (KeyCode.F)) {
+				if (currentProj == Projectiles.Length - 1) currentProj = 0;
+				else currentProj++;
+				_projectile = Projectiles[currentProj];
+			}
+			if (Input.GetButtonDown ("Fire1")) {
+				FiringEvent ();
+			}
 		}
-		if (Input.GetButtonDown ("Fire1")) {
-			FiringEvent ();
-		}
+
 	}
 
 	void Update () {

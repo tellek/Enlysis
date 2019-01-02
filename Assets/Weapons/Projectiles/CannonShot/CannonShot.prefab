@@ -264,4 +264,4 @@ MonoBehaviour:
   EndParticleEffect: {fileID: 198068689351002334, guid: 134c99779d8dcbf44b7f4878b862e176,
     type: 2}
   EndSound: {fileID: 114553541003049466, guid: bfafb8eecbca6384c8bd76e3756f6b02, type: 2}
-  EndDamageAmount: 
+  EndDamageAmount: 25

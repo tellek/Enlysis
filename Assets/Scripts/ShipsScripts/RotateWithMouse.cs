@@ -6,6 +6,8 @@ public class RotateWithMouse : MonoBehaviour
     //public float speed;
     public float speed = 2.0f;
     //public float speedV = 2.0f;
+    public bool xAxis = true;
+    public bool yAxis = false;
 
     private float yaw = 0.0f;
     private float pitch = 0.0f;
@@ -16,8 +18,14 @@ public class RotateWithMouse : MonoBehaviour
     private bool hasTarget = false;
     private bool wasStopped = false;
 
+    void Start()
+    {
+        Cursor.visible = false;
+    }
+
     void Update()
     {
+        Cursor.visible = false;
         hasTarget = gameObject.GetComponent<FindTarget>().haveTarget;
     }
 
@@ -54,8 +62,8 @@ public class RotateWithMouse : MonoBehaviour
         //}
 
         Vector2 mouseInput = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
-        transform.Rotate(Vector3.up, mouseInput.x * speed);
-
+        if (xAxis) transform.Rotate(Vector3.up, mouseInput.x * speed);
+        if (yAxis) transform.Rotate(Vector3.up, mouseInput.y * speed);
 
         //Plane playerPlane = new Plane(Vector3.up, transform.position);
         //Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
